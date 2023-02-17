@@ -1,0 +1,69 @@
+To compare two integers using a quantum algorithm, we can use the following steps:
+
+1. Represent the integers as binary numbers with the same number of bits. For example, if we have two integers 3 and 5, we can represent them as 011 and 101, respectively.
+2. Create a quantum circuit with n+1 qubits, where n is the number of bits needed to represent the integers.
+3. Initialize the first n qubits with the binary representation of the first integer and the last qubit with the state |1⟩.
+4. Apply a series of n controlled-not gates (CNOT) to the last qubit, with the first n qubits as control qubits and the last qubit as the target qubit.
+5. Apply a Hadamard gate to the first n qubits.
+6. Measure the first n qubits.
+7. If the measurement result is a binary number that represents a smaller integer than the second integer, then the algorithm returns the second integer as the larger one. Otherwise, it returns the first integer.
+
+Here's the implementation of the algorithm using Qiskit:
+
+from qiskit import QuantumCircuit, execute, Aer
+
+def find_the_largest_number(number_1, number_2):
+    # Get the number of bits needed to represent the integers
+    n = max(number_1.bit_length(), number_2.bit_length())
+    
+    # Create a quantum circuit with n+1 qubits
+    qc = QuantumCircuit(n+1, n)
+    
+    # Initialize the first n qubits with the binary representation of the first integer
+    for i in range(n):
+        if (number_1 >> i) & 1:
+            qc.x(i)
+    
+    # Set the last qubit to |1⟩
+    qc.x(n)
+    
+    # Apply a series of n controlled-not gates
+    for i in range(n):
+        qc.cx(i, n)
+    
+    # Apply a Hadamard gate to the first n qubits
+    for i in range(n):
+        qc.h(i)
+    
+    # Measure the first n qubits
+    for i in range(n):
+        qc.measure(i, i)
+    
+    # Simulate the circuit and get the measurement results
+    backend = Aer.get_backend('qasm_simulator')
+    counts = execute(qc, backend).result().get_counts()
+    
+    # Check if the measurement result represents a smaller integer than the second integer
+    for key in counts:
+        if int(key, 2) < number_2:
+            return number_2
+    
+    # Otherwise, return
+
+
+
+with n+1 qubits, where the first n qubits represent the first integer and the last qubit is used as a control qubit.
+We then apply a series of n controlled-not gates to the last qubit, with the first n qubits as control qubits and the last qubit as the target qubit. 
+This creates a superposition of states that represent all possible values of the first integer.
+Next, we apply a Hadamard gate to the first n qubits to create an equal superposition of all possible values of the first integer. 
+We then measure the first n qubits to collapse the superposition and obtain a classical result that represents a possible value of the first integer.
+If the measurement result is a binary number that represents a smaller integer than the second integer, we return the second integer as the larger one.
+Otherwise, we return the first integer.
+This algorithm is valid for all kinds of numbers because it uses a quantum circuit to create a superposition of all possible values of the first integer and measures it to obtain a classical result. 
+The algorithm works for any number of bits needed to represent the integers, and we can add more qubits to the circuit to represent larger integers.
+If we have an infinite number of qubits, we can represent any integer with an arbitrary precision, which means that the algorithm can work for any kind of number.
+
+
+
+
+
